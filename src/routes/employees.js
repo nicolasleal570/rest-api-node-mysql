@@ -26,6 +26,45 @@ router.get('/:id', (req, res) => {
     });
 });
 
-router.post();
+router.post('/', (req, res) => {
+    const {id, name, salary } = req.body; //RECIBIENDO EL OBJETO DEL CLIENTE
+
+    const querySet = `
+        CALL employeesAddOrEdit(?, ?, ?);
+    `
+    mysqlConnection.query(querySet(), [id, name, salary], (err, rows, fields) => {
+        if (!err) {
+            res.json({Status: 'Employee Saved' })
+        }else{
+            console.log(err);
+        }
+    });
+});
+
+router.put('/:id', (req, res) => {
+    const { name, salary } = req.body;
+    const { id } = req.params;
+
+    const query  = 'CALL employeAddOrEdit(?, ?, ?)'
+    mysqlConnection.query(query, [id, name, salary], (err, rows, fields) => {
+        if (!err) {
+            res.json({Status: 'Employee Updated'});
+        } else {
+            console.log(err);
+        }
+    });
+});
+
+router.delete('/:id', (req, res) => {
+    const { id } = req.params;
+
+    mysqlConnection.query('DELETE FROM employees WHERE id = ?', [id], (err, rows, fields) => {
+        if (!err) {
+            res.json({Status: 'Employe Deleted'});
+        } else {
+            console.log(err);
+        }
+    });
+});
 
 module.exports = router;
